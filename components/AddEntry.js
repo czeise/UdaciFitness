@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
+import { connect } from 'react-redux';
 
-import { getMetricMetaInfo, timeToString } from '../utils/helpers';
+import { getMetricMetaInfo, timeToString, getDailyReminderValue } from '../utils/helpers';
 import UdaciSlider from './UdaciSlider';
 import UdaciSteppers from './UdaciSteppers';
 import DateHeader from './DateHeader';
 import TextButton from './TextButton';
+import { submitEntry, removeEntry } from '../utils/api';
+import { addEntry } from '../actions';
 
 function SubmitBtn({ onPress }) {
   return (
@@ -17,7 +20,7 @@ function SubmitBtn({ onPress }) {
   );
 }
 
-export default class AddEntry extends Component {
+class AddEntry extends Component {
   state = {
     run: 0,
     bike: 0,
@@ -59,9 +62,10 @@ export default class AddEntry extends Component {
     const key = timeToString();
     const entry = this.state;
 
-    // Update Redux
+    this.props.dispatch(addEntry({
+      [key]: entry
+    }));
 
-    // Reset state
     this.setState(() => ({
         run: 0,
         bike: 0,
@@ -70,17 +74,24 @@ export default class AddEntry extends Component {
         eat: 0
     }));
 
-    // Navigate to home
-    // Save to DB
-    // Clear local notification
+    submitEntry({ key, entry });
+
+    // TODO:
+    //  - Navigate to home
+    //  - Clear local notification
   }
 
   reset = () => {
     const key = timeToString();
 
-    // Update Redux
-    // Route to home
-    // Update DB
+    this.props.dispatch(addEntry({
+      [key]: getDailyReminderValue()
+    }));
+
+    removeEntry(key);
+
+    // TODO:
+    //  - Route to home
   }
 
   render() {
@@ -133,3 +144,11 @@ export default class AddEntry extends Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  const key = timeToString();
+
+  return { alreadyLogged: state[key] && typeof state[key].today === 'undefined' };
+}
+
+export default connect(mapStateToProps)(AddEntry);
