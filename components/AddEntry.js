@@ -8,6 +8,7 @@ import UdaciSlider from './UdaciSlider';
 import UdaciSteppers from './UdaciSteppers';
 import DateHeader from './DateHeader';
 import TextButton from './TextButton';
+import { submitEntry, removeEntry } from '../utils/api';
 
 function SubmitBtn({ onPress }) {
   return (
@@ -59,9 +60,6 @@ export default class AddEntry extends Component {
     const key = timeToString();
     const entry = this.state;
 
-    // Update Redux
-
-    // Reset state
     this.setState(() => ({
         run: 0,
         bike: 0,
@@ -70,17 +68,22 @@ export default class AddEntry extends Component {
         eat: 0
     }));
 
-    // Navigate to home
-    // Save to DB
-    // Clear local notification
+    submitEntry({ key, entry });
+
+    // TODO:
+    //  - Update Redux
+    //  - Navigate to home
+    //  - Clear local notification
   }
 
   reset = () => {
     const key = timeToString();
 
-    // Update Redux
-    // Route to home
-    // Update DB
+    removeEntry(key);
+
+    // TODO:
+    //  - Update Redux
+    //  - Route to home
   }
 
   render() {
