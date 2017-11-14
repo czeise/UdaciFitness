@@ -1,0 +1,12 @@
+{
+  // Enables ES-Lint in a react-native-app
+  "extends": "plugin:react-app/recommended",
+  "rules": {
+    // Udacity JavaScript Style Guide
+    "semi": ["warn", "always"],
+    "camelcase": ["warn"],
+    "brace-style": ["warn", "1tbs", { "allowSingleLine": true }],
+    "quotes": ["warn", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
+    "no-use-before-define": "off"
+  }
+}
