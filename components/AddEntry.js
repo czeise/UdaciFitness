@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Text, Platform, StyleSheet } from 'react-native
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
 
 import { getMetricMetaInfo, timeToString, getDailyReminderValue } from '../utils/helpers';
 import UdaciSlider from './UdaciSlider';
@@ -77,10 +78,11 @@ class AddEntry extends Component {
         eat: 0
     }));
 
+    this.toHome();
+
     submitEntry({ key, entry });
 
     // TODO:
-    //  - Navigate to home
     //  - Clear local notification
   }
 
@@ -91,10 +93,15 @@ class AddEntry extends Component {
       [key]: getDailyReminderValue()
     }));
 
-    removeEntry(key);
+    this.toHome();
 
-    // TODO:
-    //  - Route to home
+    removeEntry(key);
+  }
+
+  toHome = () => {
+    this.props.navigation.dispatch(NavigationActions.back({
+      key: 'AddEntry'
+    }));
   }
 
   render() {
