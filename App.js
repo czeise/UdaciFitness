@@ -11,6 +11,7 @@ import reducer from './reducers/index';
 import History from './components/History';
 import { purple, white } from './utils/colors';
 import EntryDetail from './components/EntryDetail';
+import Live from './components/Live';
 
 function UdaciStatusBar({ backgroundColor, ...props }) {
   return (
@@ -28,19 +29,24 @@ const Tabs = TabNavigator({
       tabBarIcon: ({ tintColor }) => <Ionicons name='ios-bookmarks' size={30} color={tintColor} />
     }
   },
-
   AddEntry: {
     screen: AddEntry,
     navigationOptions: {
       tabBarLabel: 'Add Entry',
       tabBarIcon: ({ tintColor }) => <FontAwesome name='plus-square' size={30} color={tintColor} />
     }
+  },
+  Live: {
+    screen: Live,
+    navigationOptions: {
+      tabBarLabel: 'Live',
+      tabBarIcon: ({ tintColor }) => <Ionicons name='ios-speedometer' size={30} color={tintColor} />
+    }
   }
 }, {
   navigationOptions: {
     header: null
   },
-
   tabBarOptions: {
     activeTintColor: Platform.OS === 'ios' ? purple : white,
     style: {
