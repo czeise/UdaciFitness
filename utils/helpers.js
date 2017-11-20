@@ -164,7 +164,7 @@ export function getDailyReminderValue() {
   return { today: "👋 Don't forget to log your data today!" };
 }
 
-export function clearLocalNotifications() {
+export function clearLocalNotification() {
   return AsyncStorage.removeItem(NOTIFICATION_KEY)
     .then(Notifications.cancelAllScheduledNotificationsAsync);
 }
