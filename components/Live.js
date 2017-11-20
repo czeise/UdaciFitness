@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Foundation } from '@expo/vector-icons';
 import { Location, Permissions } from 'expo';
 
@@ -8,8 +8,9 @@ import { calculateDirection } from '../utils/helpers';
 
 export default class Live extends Component {
   state = {
-    coords: null,
-    status: 'granted',
+    coords: { altitude: 1, speed: 1 },
+    // Using a more accurate default status.
+    status: 'undetermined',
     direction: ''
   }
 
@@ -20,7 +21,9 @@ export default class Live extends Component {
           return this.setLocation();
         }
 
-        this.setState(() => ({ status }));
+        // Permission works differently between iOS and Android. By not setting the status
+        // immediately, we can avoid unexpted behavior.
+        // this.setState(() => ({ status }));
       }).catch((error) => {
         console.warn('Error getting Location permission: ', error);
 
@@ -29,7 +32,14 @@ export default class Live extends Component {
   }
 
   askPermission = () => {
+    Permissions.askAsync(Permissions.LOCATION)
+      .then(({ status }) => {
+        if (status === 'granted') {
+          return this.setLocation();
+        }
 
+        this.setState(() => ({ status }));
+      }).catch((error) => console.warn('error asking Location permission: ', error));
   }
 
   setLocation = () => {
@@ -38,12 +48,12 @@ export default class Live extends Component {
       timeInterval: 1,
       distanceInterval: 1
     }, ({ coords }) => {
-      const newDirection = calculateDirection(coord.heading);
+      const newDirection = calculateDirection(coords.heading);
       const { direction } = this.state;
 
       this.setState(() => ({
         coords,
-        status: 'grante',
+        status: 'granted',
         direction: newDirection
       }));
     });
@@ -51,10 +61,6 @@ export default class Live extends Component {
 
   render() {
     const { status, coords, direction } = this.state;
-
-    if (status === null) {
-      return <ActivityIndicator style={{ marginTop: 30 }}/>;
-    }
 
     if (status === 'denied') {
       return (
@@ -83,7 +89,7 @@ export default class Live extends Component {
       <View style={styles.container}>
         <View style={styles.directionContainer}>
           <Text style={styles.header}>You're heading</Text>
-          <Text style={styles.direction}>North</Text>
+          <Text style={styles.direction}>{direction}</Text>
         </View>
 
         <View style={styles.metricContainer}>
@@ -92,7 +98,7 @@ export default class Live extends Component {
               Altitude
             </Text>
             <Text style={[styles.subHeader, { color: white }]}>
-              {200} Feet
+              {Math.round(coords.altitude * 3.2808)} Feet
             </Text>
           </View>
 
@@ -101,7 +107,7 @@ export default class Live extends Component {
               Speed
             </Text>
             <Text style={[styles.subHeader, { color: white }]}>
-              {300} MPH
+              {(coords.speed * 2.2369).toFixed(1)} MPH
             </Text>
           </View>
         </View>
