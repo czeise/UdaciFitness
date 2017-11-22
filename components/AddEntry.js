@@ -5,7 +5,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 
-import { getMetricMetaInfo, timeToString, getDailyReminderValue } from '../utils/helpers';
+import {
+  getMetricMetaInfo,
+  timeToString,
+  getDailyReminderValue,
+  clearLocalNotification,
+  setLocalNotification
+} from '../utils/helpers';
 import UdaciSlider from './UdaciSlider';
 import UdaciSteppers from './UdaciSteppers';
 import DateHeader from './DateHeader';
@@ -82,8 +88,8 @@ class AddEntry extends Component {
 
     submitEntry({ key, entry });
 
-    // TODO:
-    //  - Clear local notification
+    clearLocalNotification()
+      .then(setLocalNotification);
   }
 
   reset = () => {
